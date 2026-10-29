@@ -751,6 +751,7 @@ class TaskPermission(
             ("validation_layout", "PATCH"): Scopes.UPDATE_VALIDATION_LAYOUT,
             ("download_dataset", "GET"): DownloadExportedExtension.Scopes.DOWNLOAD_EXPORTED_FILE,
             ("download_backup", "GET"): DownloadExportedExtension.Scopes.DOWNLOAD_EXPORTED_FILE,
+            ("class_counts", "GET"): Scopes.VIEW,
             # FUTURE-TODO: deprecated API
             ("dataset_export", "GET"): Scopes.EXPORT_DATASET,
             ("export_backup", "GET"): Scopes.EXPORT_BACKUP,
