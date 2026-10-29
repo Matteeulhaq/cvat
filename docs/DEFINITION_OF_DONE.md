@@ -26,9 +26,9 @@ export BASE=http://localhost:8080
 
 | Done | Criterion | How I will prove it | Evidence |
 |------|-----------|---------------------|----------|
-| [ ] | No login is refused | `curl -i $BASE/api/test/tasks/$TASK/class-counts` returns 401 | `[FILL: docs/evidence/auth-401.txt]` |
-| [ ] | User without access to the task is refused | Create a second normal user who is not in the task's organization and not assigned. Request with their credentials and record the status code (code reading says 403 — PermissionDenied via the PolicyEnforcer, because per-task queryset filtering exists only for the list action; 404 would mean the task does not exist) | `[FILL: docs/evidence/auth-denied.txt, with the actual code]` |
-| [ ] | The allowed user still works | Same request as the owner returns 200 | `[FILL: same file or counts-response.json]` |
+| [x] | No login is refused | `curl -i $BASE/api/test/tasks/$TASK/class-counts` returns 401 | `docs/evidence/auth-401.txt` — `HTTP/1.1 401 Unauthorized`, body: `"Authentication credentials were not provided."` |
+| [x] | User without access to the task is refused | Create a second normal user who is not in the task's organization and not assigned. Request with their credentials and record the status code (code reading says 403 — PermissionDenied via the PolicyEnforcer, because per-task queryset filtering exists only for the list action; 404 would mean the task does not exist) | `docs/evidence/auth-denied.txt` — `HTTP/1.1 403 Forbidden`, body: `"You do not have permission to perform this action."` — the actual code (403) matches the prediction. The user (`nobody`) was verified non-staff in the `auth_user` table (`is_staff=f`, `is_superuser=f` — note CVAT's user table is `auth_user`, set by `db_table` in `cvat/apps/iam/models.py:24`), so the denial is a real authorization decision, not a superuser bypass |
+| [x] | The allowed user still works | Same request as the owner returns 200 | `docs/evidence/counts-response.json` — same request as the owner (admin), 200 |
 
 ## C. Speed (item 6)
 
