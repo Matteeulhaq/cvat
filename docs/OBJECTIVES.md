@@ -2,16 +2,16 @@
 
 ## Test environment
 
-| Field                    | Value                                                                                                                                                                                                                                                               |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CPU                      | AMD Ryzen 5 5600 (6 cores / 12 threads)                                                                                                                                                                                                                             |
-| RAM                      | 15.9 GB                                                                                                                                                                                                                                                             |
-| Operating system         | Windows 11 Home (build 26200)                                                                                                                                                                                                                                       |
-| Docker                   | Docker 29.9.2, Docker Compose v5.6.1                                                                                                                                                                                                                                |
-| CVAT commit SHA          | `4a09e27ff869b7aebbfdb07b29c4a34904a0221d` (same SHA as the Plan)                                                                                                                                                                                                   |
-| Dataset                  | COCO 2017 val, all 5,000 images imported (actual: `[FILL: N]`)                                                                                                                                                                                                      |
-| Annotations in test task | 36,781 expected from the dataset (val2017 ships 36,781 instance annotations, ~7 per image). `[FILL: actual from the SQL count in the Definition of Done]` — may differ slightly, since the COCO importer can emit more than one shape for a multi-part segmentation |
-| Classes in test task     | 80                                                                                                                                                                                                                                                                  |
+| Field                    | Value                                                             |
+| ------------------------ | ----------------------------------------------------------------- |
+| CPU                      | AMD Ryzen 5 5600 (6 cores / 12 threads)                           |
+| RAM                      | 15.9 GB                                                           |
+| Operating system         | Windows 11 Home (build 26200)                                     |
+| Docker                   | Docker 29.9.2, Docker Compose v5.6.1                              |
+| CVAT commit SHA          | `4a09e27ff869b7aebbfdb07b29c4a34904a0221d` (same SHA as the Plan) |
+| Dataset                  | COCO 2017 val, all 5,000 images imported                          |
+| Annotations in test task | 41866                                                             |
+| Classes in test task     | 80                                                                |
 
 ### Machine capacity (checked before measuring)
 
