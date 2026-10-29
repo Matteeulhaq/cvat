@@ -4,13 +4,18 @@
 
 import './styles.scss';
 
-import React, { useEffect, useReducer } from 'react';
+import React, {
+    useEffect, useMemo, useReducer, useState,
+} from 'react';
 import { useHistory, useParams } from 'react-router';
 import Empty from 'antd/lib/empty';
 import Input from 'antd/lib/input';
 import Result from 'antd/lib/result';
+import Select from 'antd/lib/select';
 import Title from 'antd/lib/typography/Title';
-import { Chart, registerables } from 'chart.js';
+import {
+    Chart, ChartData, registerables,
+} from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
 import { getCore } from 'cvat-core-wrapper';
@@ -20,6 +25,12 @@ import { ActionUnion, createAction } from 'utils/redux';
 
 // chart.js does not register anything by default
 Chart.register(...registerables);
+
+const SHAPE_TYPE_COLORS = [
+    '#1890ff', '#52c41a', '#faad14', '#f5222d', '#722ed1', '#13c2c2', '#eb2f96', '#fa8c16',
+];
+
+type GroupBy = 'none' | 'shape_type';
 
 interface ClassCountRow {
     label: string;
@@ -67,28 +78,69 @@ const reducer = (state: State, action: ActionUnion<typeof reducerActions>): Stat
 
 const core = getCore();
 
-function ClassCountsChart({ counts }: { counts: ClassCountRow[] }): JSX.Element {
+function buildChartData(counts: ClassCountRow[], grouped: boolean): ChartData<'bar', number[], string> {
+    if (!grouped) {
+        return {
+            labels: counts.map((row) => row.label),
+            datasets: [{
+                label: 'Shapes',
+                data: counts.map((row) => row.count),
+                backgroundColor: SHAPE_TYPE_COLORS[0],
+            }],
+        };
+    }
+
+    const totals = new Map<string, number>();
+    const countsByLabel = new Map<string, Map<string, number>>();
+    for (const row of counts) {
+        const shapeType = row.type ?? 'unknown';
+        if (!countsByLabel.has(row.label)) {
+            countsByLabel.set(row.label, new Map());
+        }
+        countsByLabel.get(row.label)?.set(shapeType, row.count);
+        totals.set(row.label, (totals.get(row.label) ?? 0) + row.count);
+    }
+
+    // keep the labels ordered by their total count, like the plain view does
+    const labels = [...totals.entries()]
+        .sort((first, second) => second[1] - first[1])
+        .map(([label]) => label);
+    const shapeTypes = [...new Set(counts.map((row) => row.type ?? 'unknown'))];
+
+    return {
+        labels,
+        datasets: shapeTypes.map((shapeType, index) => ({
+            label: shapeType,
+            data: labels.map((label) => countsByLabel.get(label)?.get(shapeType) ?? 0),
+            backgroundColor: SHAPE_TYPE_COLORS[index % SHAPE_TYPE_COLORS.length],
+        })),
+    };
+}
+
+interface ClassCountsChartProps {
+    counts: ClassCountRow[];
+    grouped: boolean;
+}
+
+function ClassCountsChart({ counts, grouped }: ClassCountsChartProps): JSX.Element {
+    const data = useMemo(() => buildChartData(counts, grouped), [counts, grouped]);
+    const barCount = data.labels?.length ?? 0;
+
     return (
         <div
             className='cvat-class-counts-chart-wrapper'
-            style={{ height: Math.max(counts.length * 28, 400) }}
+            style={{ height: Math.max(barCount * 28, 400) }}
         >
             <Bar
-                data={{
-                    labels: counts.map((row) => row.label),
-                    datasets: [{
-                        label: 'Shapes',
-                        data: counts.map((row) => row.count),
-                        backgroundColor: 'rgba(24, 144, 255, 0.7)',
-                    }],
-                }}
+                data={data}
                 options={{
                     indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false },
+                        legend: grouped ? { position: 'bottom' } : { display: false },
                     },
+                    scales: grouped ? { x: { stacked: true } } : undefined,
                 }}
             />
         </div>
@@ -98,6 +150,7 @@ function ClassCountsChart({ counts }: { counts: ClassCountRow[] }): JSX.Element 
 export default function ClassCountsPage(): JSX.Element {
     const { tid } = useParams<{ tid: string }>();
     const history = useHistory();
+    const [groupBy, setGroupBy] = useState<GroupBy>('none');
     const [state, dispatch] = useReducer(
         reducer, { fetching: false, counts: [], error: null },
     );
@@ -109,14 +162,16 @@ export default function ClassCountsPage(): JSX.Element {
         }
 
         dispatch(reducerActions.fetch());
-        core.test.getTaskClassCounts(taskId).then((counts) => {
-            dispatch(reducerActions.fetchSuccess(counts));
-        }).catch((error: Error) => {
-            dispatch(reducerActions.fetchFailed(error));
-        });
+        core.test.getTaskClassCounts(taskId, groupBy === 'shape_type' ? groupBy : undefined)
+            .then((counts) => {
+                dispatch(reducerActions.fetchSuccess(counts));
+            })
+            .catch((error: Error) => {
+                dispatch(reducerActions.fetchFailed(error));
+            });
 
         return undefined;
-    }, [taskId]);
+    }, [taskId, groupBy]);
 
     const onSearch = (value: string): void => {
         const parsedId = Number(value);
@@ -175,9 +230,18 @@ export default function ClassCountsPage(): JSX.Element {
                 <Title level={4} className='cvat-text-color'>
                     {`Annotation class counts for task ${taskId}`}
                 </Title>
+                <Select<GroupBy>
+                    className='cvat-class-counts-group-by-select'
+                    value={groupBy}
+                    onChange={(value: GroupBy) => setGroupBy(value)}
+                    options={[
+                        { value: 'none', label: 'Total per class' },
+                        { value: 'shape_type', label: 'Break down by shape type' },
+                    ]}
+                />
             </div>
             {state.counts.length ? (
-                <ClassCountsChart counts={state.counts} />
+                <ClassCountsChart counts={state.counts} grouped={groupBy === 'shape_type'} />
             ) : (
                 <Empty description='No annotations in this task' />
             )}

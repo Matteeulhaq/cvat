@@ -1,0 +1,28 @@
+# MO-1 raw output
+# Date: 2026-10-29 09:15:04 UTC
+# Command: curl -s -o /dev/null -w '%{time_total}' -u admin:admin http://localhost:8080/api/test/tasks/2/class-counts
+# First line below is the warm-up (discarded), then 5 timed runs:
+# warm-up
+0.309406
+# run 1
+0.299327
+# run 2
+0.270090
+# run 3
+0.284425
+# run 4
+0.288551
+# run 5
+0.264006
+
+# Investigation after the miss (not part of the 5 measured runs)
+# DB-only time of the aggregate (docker exec cvat_db psql EXPLAIN ANALYZE):
+#   Planning Time: ~0.4 ms | Execution Time: 40.5 ms (80 groups, 41866 rows)
+# Baseline, existing OPA-guarded endpoint GET /api/tasks/2 (same auth path):
+#   tasks/2: 0.288513
+#   tasks/2: 0.273228
+#   tasks/2: 0.365665
+# Baseline, auth-only endpoint GET /api/server/about/ (no OPA check):
+#   server/about: 0.006791
+#   server/about: 0.007386
+#   server/about: 0.006775

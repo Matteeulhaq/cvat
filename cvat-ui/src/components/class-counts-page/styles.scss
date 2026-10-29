@@ -10,6 +10,13 @@
 
     .cvat-class-counts-page-header {
         @include cvat-management-page-header;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .cvat-class-counts-group-by-select {
+        min-width: $grid-unit-size * 30;
     }
 
     .cvat-class-counts-task-picker {

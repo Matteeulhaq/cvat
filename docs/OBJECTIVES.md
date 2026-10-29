@@ -34,20 +34,20 @@
 
 | Run | Time (s) |
 |-----|----------|
-| 1 | `[FILL]` |
-| 2 | `[FILL]` |
-| 3 | `[FILL]` |
-| 4 | `[FILL]` |
-| 5 | `[FILL]` |
+| 1 | 0.299327 |
+| 2 | 0.270090 |
+| 3 | 0.284425 |
+| 4 | 0.288551 |
+| 5 | 0.264006 |
 
-- Median: `[FILL]`
-- Min / Max: `[FILL]` / `[FILL]`
-- Target met: `[FILL: yes / no]`
-- If missed: `[FILL: what I found, whether I investigated, and what I would change]`
+- Median: **0.284425 s (284.4 ms)**
+- Min / Max: **0.264006 s (264.0 ms)** / **0.299327 s (299.3 ms)**
+- Target met: **no** — median 284.4 ms against the 250 ms target (missed by 34.4 ms); reported as missed per the rules above
+- If missed: I investigated before writing this. Raw output including the investigation is in `docs/evidence/mo1-raw.txt`. Three findings: (1) the database aggregate itself costs 40.5 ms (`EXPLAIN ANALYZE`, index scan over all 41,866 shape rows, 80 groups); (2) an existing CVAT endpoint guarded by the same permission layer, `GET /api/tasks/2`, costs the same as mine (273–430 ms over three runs); (3) an endpoint with authentication but no OPA permission check, `GET /api/server/about/`, costs 6–14 ms. So the ~284 ms is dominated by CVAT's per-request OPA authorization round trip, which every task endpoint pays, not by the class-count query. What I would change if this were a product endpoint: cache OPA decisions for repeated (user, resource, scope) triples, or evaluate the policy in-process — both are platform-level changes outside this task's scope. What I would NOT do is optimize the query: 40 ms of the 284 ms is the count, and halving it would not move the median under the target.
 
 ### Honest reading of the result
 
-`[FILL: one or two sentences. For example, whether the time is dominated by the database query or by the authentication layer, and how I know. Do not guess: if I did not check, say so.]`
+The time is dominated by the authentication/authorization layer, not by the database query. I know because I measured all three parts separately (commands and outputs in `docs/evidence/mo1-raw.txt`): the aggregate runs in 40.5 ms in Postgres (`EXPLAIN ANALYZE`), the whole request takes ~284 ms, an existing endpoint behind the same OPA permission check (`GET /api/tasks/2`) takes the same ~273–430 ms, and an endpoint with authentication but no permission check (`GET /api/server/about/`) takes 6–14 ms. The ~240 ms gap between the last two is the OPA round trip that CVAT's `PolicyEnforcer` makes for every task-scoped request; my endpoint pays it like every other one.
 
 ## Rules I follow for every number in this repository
 
