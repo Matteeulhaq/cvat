@@ -7200,6 +7200,42 @@ paths:
               schema:
                 $ref: '#/components/schemas/RqId'
           description: Import of the backup file has started
+  /api/test/tasks/{id}/class-counts:
+    get:
+      operationId: test_list_tasks_class_counts
+      summary: Return the number of labeled shapes for each label of the task
+      parameters:
+      - in: query
+        name: group_by
+        schema:
+          type: string
+          enum:
+          - shape_type
+        description: Additionally group the counts by shape type
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this task.
+        required: true
+      tags:
+      - test
+      security:
+      - tokenAuth: []
+      - accessTokenAuth: []
+      - sessionAuth: []
+        csrfAuth: []
+        csrfHeaderAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.cvat+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassCount'
+          description: ''
   /api/users:
     get:
       operationId: users_list
@@ -8445,6 +8481,18 @@ components:
         * `video` - VIDEO
         * `imageset` - IMAGESET
         * `audio_mp3` - AUDIO_MP3
+    ClassCount:
+      type: object
+      properties:
+        label:
+          type: string
+        type:
+          $ref: '#/components/schemas/ShapeType'
+        count:
+          type: integer
+      required:
+      - count
+      - label
     ClientEvents:
       type: object
       properties:

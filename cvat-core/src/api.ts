@@ -183,6 +183,12 @@ function build(): CVATCore {
                 return result;
             },
         },
+        test: {
+            async getTaskClassCounts(taskId: number, groupBy?: string) {
+                const result = await PluginRegistry.apiWrapper(cvat.test.getTaskClassCounts, taskId, groupBy);
+                return result;
+            },
+        },
         apiTokens: {
             async get(filter = {}) {
                 const result = await PluginRegistry.apiWrapper(cvat.apiTokens.get, filter);

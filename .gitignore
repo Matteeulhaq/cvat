@@ -19,6 +19,8 @@ __pycache__
 /tmp*cvat/
 /temp*/
 
+claude.md
+
 # Ignore generated test files
 docker-compose.tests.yml
 

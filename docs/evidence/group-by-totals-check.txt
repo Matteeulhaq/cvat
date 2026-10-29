@@ -1,0 +1,5 @@
+group_by=shape_type totals check
+--------------------------------
+Summing count per label across all grouped rows (122 rows) equals the plain
+counts for 80 of 80 labels (diff of sorted label,count lists: empty).
+Source files: counts-response.json, group-by-response.json

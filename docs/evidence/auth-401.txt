@@ -1,0 +1,15 @@
+HTTP/1.1 401 Unauthorized
+Allow: GET, HEAD, OPTIONS
+Content-Length: 58
+Content-Type: application/vnd.cvat+json
+Cross-Origin-Opener-Policy: same-origin
+Date: Thu, 29 Oct 2026 07:50:55 GMT
+Referrer-Policy: strict-origin-when-cross-origin
+Server: nginx
+Vary: Accept, Origin, Cookie
+Www-Authenticate: Token
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-Request-Id: 33bf488b-7880-4797-9a86-103b627f7ede
+
+{"detail":"Authentication credentials were not provided."}
