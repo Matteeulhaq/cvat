@@ -17,10 +17,7 @@ from . import serializers
 class ClassCountsViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = serializers.ClassCountSerializer
-    # there is nothing to filter on a single-object read; the default backends
-    # (SearchFilter, OrderingFilter, ...) expect list-view attributes on the viewset
     filter_backends = ()
-    # the response is a plain array, not a paginated one
     pagination_class = None
     iam_permission_class = TaskPermission
 
