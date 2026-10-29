@@ -10,8 +10,8 @@
 | Docker                   | Docker 29.9.2, Docker Compose v5.6.1                              |
 | CVAT commit SHA          | `4a09e27ff869b7aebbfdb07b29c4a34904a0221d` (same SHA as the Plan) |
 | Dataset                  | COCO 2017 val, all 5,000 images imported                          |
-| Annotations in test task | 41866                                                             |
-| Classes in test task     | 80                                                                |
+| Annotations in test task | 41,866 (from `docs/evidence/counts-sql.txt`; val2017 ships 36,781 raw instance annotations — multi-part segmentations import as multiple shapes) |
+| Classes in test task     | 80 (all COCO thing classes; `docs/evidence/counts-response.json`)                                                                |
 
 ### Machine capacity (checked before measuring)
 

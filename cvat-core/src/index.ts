@@ -39,6 +39,7 @@ import ConsensusSettings from './consensus-settings';
 import AnnotationGuide from './guide';
 import ApiToken from './api-token';
 import UserGrowthData from './growth';
+import { SerializedClassCount } from './server-response-types';
 import { JobValidationLayout, TaskValidationLayout } from './validation-layout';
 import { Request } from './request';
 import AboutData from './about';
@@ -109,6 +110,9 @@ export default interface CVATCore {
     };
     growth: {
         get: (userId: number) => Promise<UserGrowthData[]>;
+    };
+    test: {
+        getTaskClassCounts: (taskId: number, groupBy?: string) => Promise<SerializedClassCount[]>;
     };
     apiTokens: {
         get: (filter: ApiTokensFilter) => Promise<PaginatedResource<ApiToken>>;

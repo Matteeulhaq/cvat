@@ -476,6 +476,18 @@ function HeaderComponent(props: Props): JSX.Element {
                 >
                     Models
                 </Button>
+                <Button
+                    className={getButtonClassName('class-counts')}
+                    type='link'
+                    value='class-counts'
+                    href='/class-counts'
+                    onClick={(event: React.MouseEvent): void => {
+                        event.preventDefault();
+                        history.push('/class-counts');
+                    }}
+                >
+                    Class counts
+                </Button>
                 {isAnalyticsPluginActive && user.hasAnalyticsAccess ? (
                     <Button
                         className={getButtonClassName('analytics', false)}

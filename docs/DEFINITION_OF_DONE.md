@@ -17,10 +17,10 @@ export BASE=http://localhost:8080
 |------|-----------|---------------------|----------|
 | [x] | Endpoint returns per-class counts read from the database (item 1) | `curl -u "$CVAT_USER:$CVAT_PASS" $BASE/api/test/tasks/$TASK/class-counts` | `docs/evidence/counts-response.json` — 80 classes returned for task 2 |
 | [x] | Counts match the database exactly | Independent SQL, below. Compare every class. | `docs/evidence/counts-sql.txt` — 80 of 80 classes match, every count equal (re-checked programmatically against the saved response; 41,866 shapes total) |
-| [ ] | Page in the web UI calls the endpoint (item 2) | Browser network tab shows the request and a 200 | `[FILL: docs/evidence/page-network.png]` |
-| [ ] | Counts shown as a graph (item 3) | Screenshot of the chart for the sample task | `[FILL: docs/evidence/chart.png]` |
-| [ ] | Empty state is handled (item 4) | Open the page for a task with no annotations | `[FILL: docs/evidence/empty-state.png]` |
-| [ ] | Failed request is handled (item 4) | Stop `cvat_server` (or block the request) and reload the page | `[FILL: docs/evidence/error-state.png]` |
+| [x] | Page in the web UI calls the endpoint (item 2) | Browser network tab shows the request and a 200 | `docs/evidence/page-network.png` — DevTools network tab: `GET /api/test/tasks/2/class-counts` → `200 OK`, response `application/vnd.cvat+json` |
+| [x] | Counts shown as a graph (item 3) | Screenshot of the chart for the sample task | `docs/evidence/chart.png` — horizontal bar chart for task 2, all 80 classes (person 12,451 down to toaster 10) |
+| [x] | Empty state is handled (item 4) | Open the page for a task with no annotations | `docs/evidence/empty-state.png` — task 3 (no annotations) shows a "No annotations in this task" empty state |
+| [x] | Failed request is handled (item 4) | Stop `cvat_server` (or block the request) and reload the page | `docs/evidence/error-state.png` — with `cvat_server` stopped, reload lands on the login screen with explicit error notifications ("Could not check authentication on the server") instead of a crash |
 
 ## B. Security (item 5)
 
@@ -52,7 +52,7 @@ export BASE=http://localhost:8080
 
 | Done | Criterion | How I will prove it | Evidence |
 |------|-----------|---------------------|----------|
-| [ ] | Plan, Objectives and Definition of Done exist under `docs/` | `ls docs/` | `[FILL: output]` |
+| [x] | Plan, Objectives and Definition of Done exist under `docs/` | `ls docs/` | `DEFINITION_OF_DONE.md`, `OBJECTIVES.md`, `PLAN.md`, `evidence/` (8 evidence files) |
 | [x] | Plan committed before any code | `git log --reverse --oneline` shows the plan commit before every code commit | `126fc247e` (plan) precedes `0ff593b74` (first code commit); first 5 lines: `126fc247e`, `cd2083a3f`, `193cb7b53`, `c9eb07b19`, `0ff593b74` |
 | [ ] | Many small commits, each saying what and why | `git log --oneline` | `[FILL: commit count]` |
 | [ ] | No dead code, commented-out blocks or stray files | `git diff main...dev-test01 --stat` reviewed line by line | `[FILL: files changed count]` |

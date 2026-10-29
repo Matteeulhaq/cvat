@@ -17,7 +17,7 @@ import {
     SerializedRegister, SerializedJob, SerializedGuide, SerializedAsset, SerializedAPISchema,
     SerializedInvitationData, SerializedCloudStorage, SerializedFramesMetaData, SerializedCollection,
     SerializedRequest, SerializedJobValidationLayout, SerializedTaskValidationLayout, SerializedConsensusSettingsData,
-    SerializedApiToken, SerializedUserGrowthData,
+    SerializedApiToken, SerializedClassCount, SerializedUserGrowthData,
 } from './server-response-types';
 import {
     SerializedQualityConflictData, SerializedQualityReportData,
@@ -1704,6 +1704,21 @@ async function updateGrowthData(
     }
 }
 
+async function getTaskClassCounts(taskId: number, groupBy?: string): Promise<SerializedClassCount[]> {
+    const { backendAPI } = config;
+    try {
+        const response = await Axios.get(`${backendAPI}/test/tasks/${taskId}/class-counts`, {
+            params: {
+                ...(groupBy ? { group_by: groupBy } : {}),
+                ...enableOrganization(),
+            },
+        });
+        return response.data;
+    } catch (errorData) {
+        throw generateError(errorData);
+    }
+}
+
 export const PREVIEW_DEFAULT = Symbol('preview-default');
 export type PreviewResponse = Blob | typeof PREVIEW_DEFAULT | null;
 
@@ -2818,6 +2833,10 @@ export default Object.freeze({
     growth: Object.freeze({
         get: getGrowthData,
         update: updateGrowthData,
+    }),
+
+    test: Object.freeze({
+        getTaskClassCounts,
     }),
 
     apiTokens: Object.freeze({

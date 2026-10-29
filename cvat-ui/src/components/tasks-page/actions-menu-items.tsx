@@ -108,6 +108,12 @@ export default function TaskActionsItems(menuItemsData: MenuItemsData, taskMenuP
     }, 60]);
 
     menuItems.push([{
+        key: 'view-class-counts',
+        label: withCount('Class counts', 'view-class-counts', `/tasks/${taskId}/class-counts`),
+        disabled: isDisabled('view-class-counts'),
+    }, 65]);
+
+    menuItems.push([{
         key: 'quality_control',
         label: withCount('Quality control', 'quality_control', `/tasks/${taskId}/quality-control`),
         disabled: isDisabled('quality_control') || isQualityControlDisabled,
